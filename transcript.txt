@@ -1,0 +1,128 @@
+------------------------------------------ example1 ------------------------------------------------
+ljy@Jieyuans-MBP adder % cat ./test/example1.snek
+(negate (add1 100))%                                                                                                                                                    
+ljy@Jieyuans-MBP adder % make ./test/example1.s
+cargo run -- test/example1.snek test/example1.s
+    Finished dev [unoptimized + debuginfo] target(s) in 0.03s
+     Running `target/debug/adder test/example1.snek test/example1.s`
+ljy@Jieyuans-MBP adder % cat ./test/example1.s
+
+section .text
+global our_code_starts_here
+our_code_starts_here:
+  mov rax, 100
+add rax, 1
+neg rax
+  ret
+ljy@Jieyuans-MBP adder % make ./test/example1.run
+nasm -f macho64 test/example1.s -o runtime/our_code.o
+ar rcs runtime/libour_code.a runtime/our_code.o
+rustc -L runtime/ runtime/start.rs -o test/example1.run
+ljy@Jieyuans-MBP adder % ./test/example1.run
+-101
+
+------------------------------------------ example2 ------------------------------------------------
+
+ljy@Jieyuans-MBP adder % cat ./test/example2.snek
+(sub1 (negate (add1 28)))%                                                                                                                                              
+ljy@Jieyuans-MBP adder % make ./test/example2.s  
+cargo run -- test/example2.snek test/example2.s
+    Finished dev [unoptimized + debuginfo] target(s) in 0.03s
+     Running `target/debug/adder test/example2.snek test/example2.s`
+ljy@Jieyuans-MBP adder % cat ./test/example2.s
+
+section .text
+global our_code_starts_here
+our_code_starts_here:
+  mov rax, 28
+add rax, 1
+neg rax
+sub rax, 1
+  ret
+ljy@Jieyuans-MBP adder % make ./test/example2.run
+nasm -f macho64 test/example2.s -o runtime/our_code.o
+ar rcs runtime/libour_code.a runtime/our_code.o
+rustc -L runtime/ runtime/start.rs -o test/example2.run
+ljy@Jieyuans-MBP adder % ./test/example2.run
+-30
+
+------------------------------------------ example3 ------------------------------------------------
+
+ljy@Jieyuans-MBP adder % cat test/example3.snek
+(negate (negate (add1 (add1 (add1 0)))))%                                                                                                              
+ljy@Jieyuans-MBP adder % make test/example3.s
+cargo run -- test/example3.snek test/example3.s
+    Finished dev [unoptimized + debuginfo] target(s) in 0.03s
+     Running `target/debug/adder test/example3.snek test/example3.s`
+ljy@Jieyuans-MBP adder % cat test/example3.s
+
+section .text
+global our_code_starts_here
+our_code_starts_here:
+  mov rax, 0
+add rax, 1
+add rax, 1
+add rax, 1
+neg rax
+neg rax
+  ret
+ljy@Jieyuans-MBP adder % make test/example3.run
+nasm -f macho64 test/example3.s -o runtime/our_code.o
+ar rcs runtime/libour_code.a runtime/our_code.o
+rustc -L runtime/ runtime/start.rs -o test/example3.run
+ljy@Jieyuans-MBP adder % ./test/example3.run
+3
+
+------------------------------------------ example4 ------------------------------------------------
+
+ljy@Jieyuans-MBP adder % cat test/example4.snek
+(negate (negate (negate (sub1 (add1 8)))))%                                                                                                            
+ljy@Jieyuans-MBP adder % make test/example4.s
+cargo run -- test/example4.snek test/example4.s
+    Finished dev [unoptimized + debuginfo] target(s) in 0.03s
+     Running `target/debug/adder test/example4.snek test/example4.s`
+ljy@Jieyuans-MBP adder % cat test/example4.s
+
+section .text
+global our_code_starts_here
+our_code_starts_here:
+  mov rax, 8
+add rax, 1
+sub rax, 1
+neg rax
+neg rax
+neg rax
+  ret
+ljy@Jieyuans-MBP adder % make test/example4.run
+nasm -f macho64 test/example4.s -o runtime/our_code.o
+ar rcs runtime/libour_code.a runtime/our_code.o
+rustc -L runtime/ runtime/start.rs -o test/example4.run
+ljy@Jieyuans-MBP adder % ./test/example4.run
+-8
+
+------------------------------------------ example5 ------------------------------------------------
+
+ljy@Jieyuans-MBP adder % cat test/example5.snek
+(add1 (add1 (sub1 (negate (sub1 5)))))%                                                                                                                
+ljy@Jieyuans-MBP adder % make test/example5.s
+cargo run -- test/example5.snek test/example5.s
+    Finished dev [unoptimized + debuginfo] target(s) in 0.08s
+     Running `target/debug/adder test/example5.snek test/example5.s`
+ljy@Jieyuans-MBP adder % cat test/example5.s
+
+section .text
+global our_code_starts_here
+our_code_starts_here:
+  mov rax, 5
+sub rax, 1
+neg rax
+sub rax, 1
+add rax, 1
+add rax, 1
+  ret
+ljy@Jieyuans-MBP adder % make test/example5.run
+nasm -f macho64 test/example5.s -o runtime/our_code.o
+ar rcs runtime/libour_code.a runtime/our_code.o
+rustc -L runtime/ runtime/start.rs -o test/example5.run
+ljy@Jieyuans-MBP adder % ./test/example5.run
+-3
